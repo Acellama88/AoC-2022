@@ -41,7 +41,7 @@ def parse():
             else:
                 input.append(line.strip())
 
-def part1():
+def buildFilesystem():
     for x in input:
         tokens = re.split(" ",x)
         if tokens[1] == 'cd':
@@ -70,8 +70,6 @@ def part1():
                 tempLoc.size += int(tokens[0])
                 tempLoc = tempLoc.parent
             filesystem.size += int(tokens[0])
-    calcSize(filesystem)
-    print(finalTotal)
     
 def calcSize(directory):
     global finalTotal
@@ -82,12 +80,15 @@ def calcSize(directory):
 
 def findSmallest(directory):
     global smallest, smallestName
-    print(directory.size)
     for x in directory.dirs:
         findSmallest(x)
     if directory.size <= smallest and directory.size >= largerThan:
         smallest = directory.size
         smallestName = directory.name
+
+def part1():
+    calcSize(filesystem)
+    print(finalTotal)
 
 def part2():
     global largerThan
@@ -98,5 +99,6 @@ def part2():
 
 if __name__ == '__main__':
     parse()
+    buildFilesystem()
     part1()
     part2()
