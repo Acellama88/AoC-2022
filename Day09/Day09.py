@@ -3,11 +3,6 @@ import re
 file = "./Day09/input.txt"
 finalTotal = 0
 input = []
-hx = 0
-hy = 0
-tx = 0
-ty = 0
-locations = {}
 
 def parse():
     with open(file) as f:
@@ -19,71 +14,75 @@ def parse():
             else:
                 input.append(line.strip())
 
-def checkDist(hx, hy, tx, ty):
-    distX = abs(hx - tx)
-    distY = abs(hy - ty)
-    if (distX >= 2) or (distY >= 2):
-        return True
-    return False
+def performMove(head, tail):
+    hx = head[0]
+    hy = head[1]
+    tx = tail[0]
+    ty = tail[1]
+
+    #They are already touching
+    if (abs(hx-tx) <= 1 and abs(hy-ty) <= 1):
+        return tail
+    if (hx == tx): #same X axis
+        move = (hy - ty) / 2
+        ty = ty + move
+    elif (hy == ty): #same Y axis
+        move = (hx - tx) / 2
+        tx = tx + move
+    else: #Move Diagonal Closer
+        moveX = (hx - tx) / abs((hx - tx))
+        moveY = (hy - ty) / abs((hy - ty))
+        tx = tx + moveX
+        ty = ty + moveY
+    return [tx, ty]
+    
 
 
 def part1():
-    global hx, hy, tx, ty
-    locations[(tx,ty)] = 0
+    head = [0,0]
+    tail = [0,0]
+    locations = {}
+    locations[(0,0)] = 0
     for x in input:
         token = x.split(" ")
         for i in range(0,int(token[1])):
-            lastx = hx
-            lasty = hy
             if token[0] == 'L':
-                hx = hx -1
+                head[0] = head[0] -1
             elif token[0] == 'R':
-                hx = hx +1
+                head[0] = head[0] +1
             if token[0] == 'D':
-                hy = hy -1
+                head[1] = head[1] -1
             elif token[0] == 'U':
-                hy = hy +1
-            if checkDist():
-                tx = lastx
-                ty = lasty
-            locations[(tx,ty)] = 0
+                head[1] = head[1] +1
+            tail = performMove(head, tail)
+            locations[(tail[0], tail[1])] = 0
     print(len(locations))
 
 def part2():
     knots = [[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0],[0,0]]
-    locations[(knots[9][0],knots[9][1])] = 0
-    nextX = 0
-    nextY = 0
+    locations = {}
+    locations[(0,0)] = 0
     for x in input:
         token = x.split(" ")
         for i in range(0,int(token[1])):
-                lastx = knots[0][0]
-                lasty = knots[0][1]
-                if token[0] == 'L':
-                    knots[0][0] = knots[0][0] -1
-                elif token[0] == 'R':
-                    knots[0][0] = knots[0][0] +1
-                elif token[0] == 'D':
-                    knots[0][1] = knots[0][1] -1
-                elif token[0] == 'U':
-                    knots[0][1] = knots[0][1] +1
-                for a in range(0,len(knots)):
-                    if(a < len(knots) - 1):
-                        nextX = knots[a+1][0]
-                        nextY = knots[a+1][1]
-                    else:
-                        break
-                    if checkDist(knots[a][0], knots[a][1], knots[a+1][0], knots[a+1][1]):
-                        nextX = knots[a+1][0]
-                        nextY = knots[a+1][1]
-                        knots[a+1][0] = lastx
-                        knots[a+1][1] = lasty
-                        lastx = nextX
-                        lasty = nextY
-                locations[(knots[9][0],knots[9][1])] = 0
-        print(knots)
+            if token[0] == 'L':
+                knots[0][0] = knots[0][0] -1
+            elif token[0] == 'R':
+                knots[0][0] = knots[0][0] +1
+            elif token[0] == 'D':
+                knots[0][1] = knots[0][1] -1
+            elif token[0] == 'U':
+                knots[0][1] = knots[0][1] +1
+            for a in range(0,len(knots)-1):
+                res = performMove(knots[a], knots[a+1])
+                if (res != knots[a+1]):
+                    knots[a+1] = res
+                else:
+                    break    
+            locations[(knots[9][0], knots[9][1])] = 0
     print(len(locations))
 
 if __name__ == '__main__':
     parse()
+    part1()
     part2()
