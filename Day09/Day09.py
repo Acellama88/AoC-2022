@@ -35,8 +35,6 @@ def performMove(head, tail):
         tx = tx + moveX
         ty = ty + moveY
     return [tx, ty]
-    
-
 
 def part1():
     head = [0,0]
