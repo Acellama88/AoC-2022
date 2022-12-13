@@ -33,7 +33,7 @@ def opMonkey3(value):
 '''
 
 class monkey:
-    def __init__(self, Op, Test, TrueM, FalseM, Items):
+    def __init__(self, Op, Test: int, TrueM: int, FalseM: int, Items: list):
         self.op = Op
         self.true = TrueM
         self.false = FalseM
@@ -47,12 +47,12 @@ class monkey:
             Monkeys[self.true].items.append(value)
         else:
             Monkeys[self.false].items.append(value)
-    items = []
-    testVal = 0
+    items:list = []
+    testVal:int = 0
     op = opMonkey0
-    true = 0
-    false = 0
-    count = 0
+    true:int = 0
+    false:int = 0
+    count:int = 0
 
 def parse():
     global Monkeys
@@ -83,8 +83,11 @@ def part1():
                 value = m.op(value)
                 value = math.floor(value / 3)
                 m.test(value)
+    vals = []
     for m in Monkeys:
-        print(f"{m.count}")
+        vals.append(m.count)
+        vals.sort()
+    print(f"{vals[-1]} * {vals[-2]} = {vals[-1] * vals[-2]}")
 
 def part2():
     global Monkeys
@@ -99,7 +102,7 @@ def part2():
     for m in Monkeys:
         vals.append(m.count)
         vals.sort()
-    print(vals)
+    print(f"{vals[-1]} * {vals[-2]} = {vals[-1] * vals[-2]}")
 
 if __name__ == '__main__':
     parse()
